@@ -24,7 +24,7 @@ public class TokenController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenController.class);
 
     @Autowired
-    private TokenService tokenService ;
+    private TokenService tokenService;
 
     @RequestMapping(value="/test", method = {RequestMethod.GET,RequestMethod.POST})
     public ModelAndView test(HttpServletRequest request, HttpServletResponse response){
