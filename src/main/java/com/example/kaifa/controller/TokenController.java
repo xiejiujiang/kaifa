@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Controller
 @RequestMapping(value = "/token")
@@ -29,7 +31,7 @@ public class TokenController {
     @RequestMapping(value="/test", method = {RequestMethod.GET,RequestMethod.POST})
     public ModelAndView test(HttpServletRequest request, HttpServletResponse response){
         ModelAndView mav = new ModelAndView();
-        mav.addObject("name","张三");
+        mav.addObject("name","张三姗");
         mav.setViewName("ptdesc");
         return mav;
     }
@@ -67,4 +69,23 @@ public class TokenController {
         return "{ \"result\":\"success\" }";
     }
 
+
+    // 提供给 第三方的接口，用于 调取 获取 当前 客户，当前商品的 T+的 销售策略 带出的 价格！
+    @RequestMapping(value="/getsaleprice", method = {RequestMethod.GET,RequestMethod.POST})
+    public @ResponseBody String getsaleprice(HttpServletRequest request, HttpServletResponse response){
+        String customer = request.getParameter("customer");
+        String inventory = request.getParameter("inventory");
+        String sign = request.getParameter("sign");
+        String today = new SimpleDateFormat("yyyyMMdd").format(new Date());//当日
+        if(sign != null && !sign.equals("")
+                && customer != null && !customer.equals("")
+                && inventory != null && !inventory.equals("")
+                && sign.equals(Md5.md5(customer+inventory+today))){
+            String price = tokenService.getsaleprice(customer,inventory);
+            return price;
+        }else{
+            String price = "999999";
+            return price;
+        }
+    }
 }

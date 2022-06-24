@@ -22,4 +22,16 @@ public class TokenServiceImpl implements TokenService {
     private orderMapper orderMapper;
 
 
+    @Override
+    public String getsaleprice(String customer, String inventory) {
+        List<Map<String,String>> pricelist = orderMapper.getSalePriceList();
+        if(pricelist != null && pricelist.size() != 0){
+
+
+
+            return "";
+        }else{
+            return "999999";
+        }
+    }
 }

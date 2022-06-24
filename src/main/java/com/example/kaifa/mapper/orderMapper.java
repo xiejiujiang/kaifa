@@ -11,4 +11,6 @@ import java.util.Map;
 @Repository
 public interface orderMapper {
 
+    public List<Map<String,String>> getSalePriceList();
+
 }
