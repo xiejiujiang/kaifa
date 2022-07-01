@@ -29,12 +29,7 @@ public interface BasicService {
     //创建凭证
     public String createPZ(Map<String,String> params);
 
-    //查询销货单详情接口
-    public JsonRootBean getSaOrder(Map<String,String> params);
-
     //根据 单据编号 返回 附件 ID
     public List<Map<String,String>> getfjidByCode(String code);
 
-    //弃审 销货单： code
-    public String unAuditZDorder(String voucherCode);
 }

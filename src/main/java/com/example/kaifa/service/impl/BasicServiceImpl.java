@@ -63,11 +63,12 @@ public class BasicServiceImpl implements BasicService {
         String result = "";
         try {
             String json = "{dto:{\"Code\":\"09002\", \"Name\":\"销售二部\", \"Parent\":{\"Code\":\"09\"}}}";
+            String token = orderMapper.getTokenByAppKey(params.get("AppKey"));
             result = HttpClient.HttpPost("/tplus/api/v2/ProjectClass/Create",
                     json,
                     params.get("AppKey"),
                     params.get("AppSecret"),
-                    orderMapper.getTokenByAppKey(params.get("AppKey")));
+                    token);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -79,11 +80,12 @@ public class BasicServiceImpl implements BasicService {
         String result = "";
         try {
             String json = "{param:{Code:\"09\"}}"; //Name 也可以
+            String token = orderMapper.getTokenByAppKey(params.get("AppKey"));
             result = HttpClient.HttpPost("/tplus/api/v2/ProjectClass/Query",
                     json,
                     params.get("AppKey"),
                     params.get("AppSecret"),
-                    orderMapper.getTokenByAppKey(params.get("AppKey")));
+                    token);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,11 +97,12 @@ public class BasicServiceImpl implements BasicService {
         String result = "";
         try {
             String json = "{param:{Code:\"09\"}}"; //Name 也可以，  {param:{}} 查所有
+            String token = orderMapper.getTokenByAppKey(params.get("AppKey"));
             result = HttpClient.HttpPost("/tplus/api/v2/warehouse/Query",
                     json,
                     params.get("AppKey"),
                     params.get("AppSecret"),
-                    orderMapper.getTokenByAppKey(params.get("AppKey")));
+                    token);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,11 +115,12 @@ public class BasicServiceImpl implements BasicService {
         try {
             //16.0 最简传参，若非 就不传 warehouseType 01：普通仓02：现场仓03：委外仓,其他参数请参照API文档
             String json = "{\"dto\": {\"Code\": \"001\",\"Name\": \"电子设备库\",\"warehouseType\": {\"Code\": \"01\"}}}";
+            String token = orderMapper.getTokenByAppKey(params.get("AppKey"));
             result = HttpClient.HttpPost("/tplus/api/v2/warehouse/Create",
                     json,
                     params.get("AppKey"),
                     params.get("AppSecret"),
-                    orderMapper.getTokenByAppKey(params.get("AppKey")));
+                    token);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -191,79 +195,21 @@ public class BasicServiceImpl implements BasicService {
             sa.put("DocType", DocType);
             dto.put("dto", sa);
             String json = JSONObject.toJSONString(dto);
+            String token = orderMapper.getTokenByAppKey(params.get("AppKey"));
             result = HttpClient.HttpPost("/tplus/api/v2/doc/ReturnCodeCreate",
                     json,
                     params.get("AppKey"),
                     params.get("AppSecret"),
-                    orderMapper.getTokenByAppKey(params.get("AppKey")));
+                    token);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
-
-    @Override
-    public JsonRootBean getSaOrder(Map<String, String> params) {
-        JsonRootBean jrb = new JsonRootBean();
-        String code = params.get("code");//单据编号
-        String token = orderMapper.getTokenByAppKey(params.get("AppKey"));
-        try {
-            String json = "{param:{voucherCode:\"" + code + "\"}}"; //{param:{}} 查所有
-            String result = HttpClient.HttpPost("/tplus/api/v2/SaleDeliveryOpenApi/GetVoucherDTO",
-                    json,
-                    params.get("AppKey"),
-                    params.get("AppSecret"),
-                    token);
-            JSONObject job = JSONObject.parseObject(result);
-            jrb = job.toJavaObject(JsonRootBean.class);
-            if(jrb  == null || jrb.getCode() == null || jrb.getCode().contains("999")){//说明请求畅捷通失败，就再来一次
-                String result2 = HttpClient.HttpPost("/tplus/api/v2/SaleDeliveryOpenApi/GetVoucherDTO",
-                        json,
-                        params.get("AppKey"),
-                        params.get("AppSecret"),
-                        token);
-                JSONObject job2 = JSONObject.parseObject(result2);
-                jrb = job2.toJavaObject(JsonRootBean.class);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return jrb;
-    }
-
 
     //根据单据编号 获取 附件 ID
     public List<Map<String, String>> getfjidByCode(String code) {
         List<Map<String, String>> ids = orderMapper.getfjidByCode(code);
         return ids;
-    }
-
-
-    public String unAuditZDorder(String voucherCode){
-        String result = "";
-        try{
-            String auditjson = "{\n" +
-                    "  \"param\": {\n" +
-                    "    \"voucherCode\": \""+voucherCode+"\"\n" +
-                    "  }\n" +
-                    "}";
-            String access_token = orderMapper.getTokenByAppKey("djrUbeB2");//appKey
-            String auditResult = HttpClient.HttpPost("/tplus/api/v2/SaleDeliveryOpenApi/UnAudit",auditjson,
-                    "djrUbeB2",
-                    "F707B3834D9448B2A81856DE4E42357A",
-                    access_token);
-            JSONObject unauditjob = JSONObject.parseObject(auditResult);
-            if(unauditjob.getString("code").contains("999")){//如果弃审失败，就再弃审一次 试试
-                auditResult = HttpClient.HttpPost("/tplus/api/v2/SaleDeliveryOpenApi/UnAudit",auditjson,
-                        "djrUbeB2",
-                        "F707B3834D9448B2A81856DE4E42357A",
-                        access_token);
-            }
-            LOGGER.info("-------------- 单号： " + voucherCode + "的弃审结果是：" + auditResult);
-            result = auditResult;
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return result;
     }
 }
