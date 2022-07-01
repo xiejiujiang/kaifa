@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 public class SaOrderServiceImpl implements SaOrderService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasicServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SaOrderServiceImpl.class);
 
     @Autowired
     private orderMapper orderMapper;

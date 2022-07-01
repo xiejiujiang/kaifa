@@ -1,7 +1,9 @@
 package com.example.kaifa.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.kaifa.entity.PurSubchaseOrder.PuorderJsonRootBean;
 import com.example.kaifa.entity.SAsubscribe.SACsubJsonRootBean;
+import com.example.kaifa.service.PuOrderService;
 import com.example.kaifa.service.TokenService;
 import com.example.kaifa.utils.*;
 import org.slf4j.Logger;
@@ -19,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/token")
@@ -28,6 +32,9 @@ public class TokenController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private PuOrderService puOrderService;
 
     @RequestMapping(value="/test", method = {RequestMethod.GET,RequestMethod.POST})
     public ModelAndView test(HttpServletRequest request, HttpServletResponse response){
@@ -63,8 +70,16 @@ public class TokenController {
             JSONObject job = JSONObject.parseObject(destr);
             String msgType = job.getString("msgType");
             //根据 不同的 msgType 处理不同 的业务。
-            if("SaleDelivery_Audit".equals(msgType)){
+            /*if("SaleDelivery_Audit".equals(msgType)){
                 SACsubJsonRootBean jrb =  job.toJavaObject(SACsubJsonRootBean.class);//销货单审核的订阅信息DTO
+            }*/
+
+            if("PurchaseOrder_Audit".equals(msgType)){
+                PuorderJsonRootBean puorder = job.toJavaObject(PuorderJsonRootBean.class);//采购订单
+                Map<String,String> pras = new HashMap<String,String>();
+                pras.put("code",puorder.getBizContent().getVoucherCode());
+                Map<String,Object> resultMap = puOrderService.getPuOrderByDB(pras);
+                //这个 resultMap 就是 从数据库 中 查询 返回的 结果。
             }
         }catch (Exception e){
             e.printStackTrace();
