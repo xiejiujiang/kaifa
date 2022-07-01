@@ -60,7 +60,9 @@ public class TokenController {
             String destr = AESUtils.aesDecrypt(encryptMsg,"123456789012345x");
             // {"id":"AC1C04B100013301500B4A9B012DB2EC","appKey":"A9A9WH1i","appId":"58","msgType":"SaleDelivery_Audit","time":"1649994072443","bizContent":{"externalCode":"","voucherID":"23","voucherDate":"2022/4/15 0:00:00","voucherCode":"SA-2022-04-0011"},"orgId":"90015999132","requestId":"86231b63-f0c2-4de1-86e9-70557ba9cd62"}
             JSONObject job = JSONObject.parseObject(destr);
-            if("SaleDelivery_Audit".equals(job.getString("msgType"))){
+            String msgType = job.getString("msgType");
+            //根据 不同的 msgType 处理不同 的业务。
+            if("SaleDelivery_Audit".equals(msgType)){
 
             }
         }catch (Exception e){

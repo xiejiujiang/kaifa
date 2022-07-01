@@ -3,7 +3,8 @@
 <mapper namespace="com.example.kaifa.mapper.orderMapper">
 
     <select id="getSalePriceList" resultType="java.util.Map">
-        select name,isInUse,priorityLevel from AA_SalePriceSource
+        select name,isInUse,priorityLevel from AA_SalePriceSource where isInUse = 1
+        order by priorityLevel asc
     </select>
 
 </mapper>
