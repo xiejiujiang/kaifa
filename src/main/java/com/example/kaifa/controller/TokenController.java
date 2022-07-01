@@ -1,6 +1,7 @@
 package com.example.kaifa.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.kaifa.entity.SAsubscribe.SACsubJsonRootBean;
 import com.example.kaifa.service.TokenService;
 import com.example.kaifa.utils.*;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class TokenController {
             String msgType = job.getString("msgType");
             //根据 不同的 msgType 处理不同 的业务。
             if("SaleDelivery_Audit".equals(msgType)){
-
+                SACsubJsonRootBean jrb =  job.toJavaObject(SACsubJsonRootBean.class);//销货单审核的订阅信息DTO
             }
         }catch (Exception e){
             e.printStackTrace();
