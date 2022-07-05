@@ -31,4 +31,26 @@
         order by priorityLevel asc
     </select>
 
+    <select id="getPuOrderByCode" parameterType="java.lang.String" resultType="java.util.Map">
+        select id,code,idwarehouse,memo,iddepartment,payType,idproject,auditor,idsourcevouchertype,
+               makerid,maker,voucherState,createdtime,origEarnestMoney,linkTelphone,DataSource,origTotalTaxAmount,
+               idcurrency,saleOrderCode,idbusinesstype,auditeddate
+        from PU_PurchaseOrder where code = #{code}
+    </select>
+
+    <select id="getPuOrderBListByCode" parameterType="java.lang.String" resultType="java.util.Map">
+        select t2.code,t2.id,PriceStrategyTypeName,t2.quantity,t2.idinventory,t2.taxFlag,t2.price,t2.origDiscountPrice,
+               t2.taxRate,t2.taxAmount,t2.saleOrderId,t2.countInQuantity,t2.detailVoucherState,t2.idsourcevouchertype,
+               t2.saleOrderCode,t2.idwarehouse,t2.idbaseunit
+        from PU_PurchaseOrder t1,PU_PurchaseOrder_b t2
+        where t1.code = #{code} and t1.id = t2.idPurchaseOrderDTO
+    </select>
+
+
+    <select id="getDepartmentSalePrice" parameterType="java.util.Map" resultType="java.util.Map">
+        select id
+        from AA_DepartmentInventoryPrice
+        where iddepartment = #{iddepartment} and idinventory = #{idinventory}
+    </select>
+
 </mapper>

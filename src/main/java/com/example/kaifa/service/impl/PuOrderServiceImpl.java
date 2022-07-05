@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,8 +23,10 @@ public class PuOrderServiceImpl implements PuOrderService {
 
     @Override
     public Map<String,Object> getPuOrderByDB(Map<String, String> params) {
-
-
-        return null;
+        String code = params.get("code");
+        Map<String,Object> PuOrderMap = orderMapper.getPuOrderByCode(code);
+        List<Map<String,Object>> PuOrderList = orderMapper.getPuOrderBListByCode(code);
+        PuOrderMap.put("PuOrderList",PuOrderList);
+        return PuOrderMap;
     }
 }

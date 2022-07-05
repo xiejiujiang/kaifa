@@ -87,7 +87,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String getsaleprice(String customer, String inventory) {
-        String price = "";
+        String price = "999999";
         List<Map<String,String>> pricelist = orderMapper.getSalePriceList();//获取 账套里面 的 销售带出策略的 明细, 已经按照 级别 排序了。
         if(pricelist != null && pricelist.size() != 0){//name,isInUse,priorityLevel
             for(Map<String,String> map : pricelist){
@@ -120,8 +120,22 @@ public class TokenServiceImpl implements TokenService {
             case "客户协议价":
 
                 break;
+            case "部门批发价":
+
+                break;
+            case "客户折扣":
+
+                break;
+            case "存货最新售价":
+
+                break;
+            case "存货批发价":
+
+                break;
+            case "存货数量档位价格":
+
+                break;
         }
         return price;
     }
-
 }
