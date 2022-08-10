@@ -1,56 +1,88 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.kaifa.mapper.orderMapper">
-
-    <select id="getDBAllOrgList" resultType="java.util.Map">
-        select id_num,code,AppKey,AppSecret,access_token,refresh_token,user_id,org_id,app_name,update_time from XXX_code_token
-    </select>
-
-    <update id="updateOrgToken" parameterType="java.util.Map">
-        update XXX_code_token set access_token = #{access_token},refresh_token = #{refresh_token},update_time = GETDATE()
-        where org_id = #{org_id}
-    </update>
-
-    <select id="getTokenByAppKey" parameterType="java.lang.String" resultType="java.lang.String">
-        select access_token from XXX_code_token where AppKey = #{AppKey}
-    </select>
-
-    <select id="getAppKeySecretByAppKey" parameterType="java.lang.String" resultType="java.util.Map">
-        select AppKey,AppSecret from XXX_code_token where org_id = #{OrgId}
-    </select>
-
-    <select id="getfjidByCode" parameterType="java.lang.String" resultType="java.util.Map">
-        select t2.id,t2.FileType,t2.FileSize,t2.FileName,t2.UploadPath
-        from SA_SaleDelivery t1,eap_attachmentinfo t2
-        where t1.code = #{code} and t1.id = t2.AssociateID
-        order by t2.id asc
-    </select>
-
     <select id="getSalePriceList" resultType="java.util.Map">
         select name,isInUse,priorityLevel from AA_SalePriceSource where isInUse = 1
         order by priorityLevel asc
     </select>
 
-    <select id="getPuOrderByCode" parameterType="java.lang.String" resultType="java.util.Map">
-        select id,code,idwarehouse,memo,iddepartment,payType,idproject,auditor,idsourcevouchertype,
-               makerid,maker,voucherState,createdtime,origEarnestMoney,linkTelphone,DataSource,origTotalTaxAmount,
-               idcurrency,saleOrderCode,idbusinesstype,auditeddate
-        from PU_PurchaseOrder where code = #{code}
+    <select id="getDepartmentSalePrice" parameterType="java.util.Map" resultType="java.lang.String">
+        select top 1
+        t2.taxPrice as price
+        from SA_SaleDelivery t1,SA_SaleDelivery_b t2
+        where t1.id = t2.idSaleDeliveryDTO and t2.idInventory = #{idinventory} and t1.idDepartment = #{iddepartment}
+        and t1.voucherState = 189
+        order by t1.createdtime desc
     </select>
 
-    <select id="getPuOrderBListByCode" parameterType="java.lang.String" resultType="java.util.Map">
-        select t2.code,t2.id,PriceStrategyTypeName,t2.quantity,t2.idinventory,t2.taxFlag,t2.price,t2.origDiscountPrice,
-               t2.taxRate,t2.taxAmount,t2.saleOrderId,t2.countInQuantity,t2.detailVoucherState,t2.idsourcevouchertype,
-               t2.saleOrderCode,t2.idwarehouse,t2.idbaseunit
-        from PU_PurchaseOrder t1,PU_PurchaseOrder_b t2
-        where t1.code = #{code} and t1.id = t2.idPurchaseOrderDTO
+    <select id="getCustmerSalePrice" parameterType="java.util.Map" resultType="java.lang.String">
+        select top 1
+        t2.taxPrice as price
+        from SA_SaleDelivery t1,SA_SaleDelivery_b t2
+        where t1.id = t2.idSaleDeliveryDTO and t2.idInventory = #{idinventory} and t1.idcustomer = #{idcustomer}
+          and t1.voucherState = 189
+        order by t1.createdtime desc
     </select>
 
-
-    <select id="getDepartmentSalePrice" parameterType="java.util.Map" resultType="java.util.Map">
-        select id
-        from AA_DepartmentInventoryPrice
-        where iddepartment = #{iddepartment} and idinventory = #{idinventory}
+    <select id="getCustmerxieyiPrice" parameterType="java.util.Map" resultType="java.lang.String">
+        select top 1 agreementPrice as price
+        from AA_CustomerInventoryPrice
+        where idInventory = #{idinventory} and idcustomer = #{idcustomer}
+        order by id desc
     </select>
 
+    <select id="getDepartmentPIFAprice" parameterType="java.util.Map" resultType="java.lang.String">
+        select (case
+                    when t2.priceGrade = 442 then t1.retailPriceFormula
+                    when t2.priceGrade = 2366 then t1.retailPrice
+                    when t2.priceGrade = 440 then t1.level1Price
+                    when t2.priceGrade = 105 then t1.level2Price
+                    when t2.priceGrade = 56 then t1.level3Price
+                    when t2.priceGrade = 27 then t1.level4Price
+                    when t2.priceGrade = 383 then t1.level5Price
+                    when t2.priceGrade = 1328 then t1.level6Price
+                    when t2.priceGrade = 1329 then t1.level7Price
+                    when t2.priceGrade = 1330 then t1.level8Price
+                    when t2.priceGrade = 1331 then t1.level9Price
+                    when t2.priceGrade = 1332 then t1.level10Price
+            end ) as price
+        from AA_DepartmentInventoryPrice t1,AA_partner t2
+        where t1.idInventory = #{idinventory} and t1.idDepartment = #{iddepartment} and t2.id = #{idcustomer}
+    </select>
+
+    <select id="getInventoryPIFAprice" parameterType="java.util.Map" resultType="java.lang.String">
+        select (case
+                    when t2.priceGrade = 442 then t1.retailPriceFormula
+                    when t2.priceGrade = 2366 then t1.retailPrice
+                    when t2.priceGrade = 440 then t1.invSCost1
+                    when t2.priceGrade = 105 then t1.invSCost2
+                    when t2.priceGrade = 56 then t1.invSCost3
+                    when t2.priceGrade = 27 then t1.invSCost4
+                    when t2.priceGrade = 383 then t1.invSCost5
+                    when t2.priceGrade = 1328 then t1.invSCost6
+                    when t2.priceGrade = 1329 then t1.invSCost7
+                    when t2.priceGrade = 1330 then t1.invSCost8
+                    when t2.priceGrade = 1331 then t1.invSCost9
+                    when t2.priceGrade = 1332 then t1.invSCost10
+            end ) as price
+        from AA_InventoryPrice t1,AA_partner t2
+        where t1.idInventory = #{idinventory}  and t2.id = #{idcustomer}
+    </select>
+
+    <select id="getCustomerLastprice" parameterType="java.util.Map" resultType="java.lang.String">
+        select TOP 1 (t2.price*(1+t1.increasePriceRate)) as price
+        from AA_CustomerInventoryPrice t1,
+            (select top 1 k2.idinventory,k2.origDiscountPrice as price
+            from PU_PurchaseArrival k1,PU_PurchaseArrival_b k2
+            where k1.voucherState = 189 and k1.id = k2.idPurchaseArrivalDTO and k2.idinventory = #{idinventory}
+            order by k2.id desc)t2
+        where t1.idinventory = #{idinventory}  and t1.idcustomer = #{idcustomer}
+        and t1.idinventory = t2.idinventory
+    </select>
+
+    <select id="getInventoryLastprice" parameterType="java.util.Map" resultType="java.lang.String">
+        select TOP 1  (t1.latestPPrice*(1+t1.MarkupRate)) as price
+        from AA_InventoryPrice t1
+        where t1.idInventory = #{idinventory}
+    </select>
 </mapper>

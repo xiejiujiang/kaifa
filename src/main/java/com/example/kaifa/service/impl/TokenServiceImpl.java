@@ -1,9 +1,7 @@
 package com.example.kaifa.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.kaifa.mapper.orderMapper;
 import com.example.kaifa.service.TokenService;
-import com.example.kaifa.utils.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,78 +20,14 @@ public class TokenServiceImpl implements TokenService {
     private orderMapper orderMapper;
 
     @Override
-    public String refreshToken(){
-        try {
-            List<Map<String,String>> orgList = orderMapper.getDBAllOrgList();
-            if(orgList != null && orgList.size() != 0){
-                for(Map<String,String> org : orgList){
-                    Map<String,String> parma = new HashMap<String,String>();
-                    parma.put("grantType","refresh_token");
-                    parma.put("appKey",org.get("AppKey"));
-                    parma.put("refreshToken",org.get("refresh_token"));
-                    String result = HttpClient.doGeturlparams("https://openapi.chanjet.com/auth/refreshToken", parma);
-                    //将返回的 result 解析出来，写回数据库！,并一定更新 最后的 更新时间 ,其实 只有 refresh_token,token,和 更新时间会变。
-                    JSONObject jso = JSONObject.parseObject(result);
-                    if("200".equals(jso.get("code").toString())){//调用成功，更新数据库！
-                        JSONObject detail = JSONObject.parseObject(jso.get("result").toString());
-                        String access_token = detail.get("access_token").toString();
-                        String refresh_token = detail.get("refresh_token").toString();
-                        String org_id = detail.get("org_id").toString();
-                        Map<String,String> updateMap = new HashMap<String,String>();
-                        updateMap.put("org_id",org_id);
-                        updateMap.put("refresh_token",refresh_token);
-                        updateMap.put("access_token",access_token);
-                        orderMapper.updateOrgToken(updateMap);
-                    }else{
-                        LOGGER.error("----------------更新失败，检擦！！！---------------------- " + org.get("org_id").toString());
-                    }
-                }
-            }
-        }catch (Exception e){
-            //e.printStackTrace();
-            //如果出异常，就再来一次试试
-            try{
-                List<Map<String,String>> orgList = orderMapper.getDBAllOrgList();
-                if(orgList != null && orgList.size() != 0){
-                    for(Map<String,String> org : orgList){
-                        Map<String,String> parma = new HashMap<String,String>();
-                        parma.put("grantType","refresh_token");
-                        parma.put("appKey",org.get("AppKey"));
-                        parma.put("refreshToken",org.get("refresh_token"));
-                        String result = HttpClient.doGeturlparams("https://openapi.chanjet.com/auth/refreshToken", parma);
-                        //将返回的 result 解析出来，写回数据库！,并一定更新 最后的 更新时间 ,其实 只有 refresh_token,token,和 更新时间会变。
-                        JSONObject jso = JSONObject.parseObject(result);
-                        if("200".equals(jso.get("code").toString())){//调用成功，更新数据库！
-                            JSONObject detail = JSONObject.parseObject(jso.get("result").toString());
-                            String access_token = detail.get("access_token").toString();
-                            String refresh_token = detail.get("refresh_token").toString();
-                            String org_id = detail.get("org_id").toString();
-                            Map<String,String> updateMap = new HashMap<String,String>();
-                            updateMap.put("org_id",org_id);
-                            updateMap.put("refresh_token",refresh_token);
-                            updateMap.put("access_token",access_token);
-                            orderMapper.updateOrgToken(updateMap);
-                        }else{
-                            LOGGER.error("----------------更新失败，检擦！！！---------------------- " + org.get("org_id").toString());
-                        }
-                    }
-                }
-            }catch (Exception ex){
-                LOGGER.error("---------------- 再来一次都TM失败了，检查一下看看！ ---------------------- " );
-            }
-        }
-        return "success";
-    }
-
-    @Override
-    public String getsaleprice(String customer, String inventory) {
+    public String getsaleprice(String customer, String inventory,String department) {
         String price = "999999";
         List<Map<String,String>> pricelist = orderMapper.getSalePriceList();//获取 账套里面 的 销售带出策略的 明细, 已经按照 级别 排序了。
         if(pricelist != null && pricelist.size() != 0){//name,isInUse,priorityLevel
             for(Map<String,String> map : pricelist){
                 String name = map.get("name");
                 //根据 每一个 customer inventory 和 售价带出策略的name 去 获取 对应的 价格,第一个没有就去拿 第二个，直到 拿到 有内容的 为止。
-                price = getSaNamePrice(customer,inventory,name);
+                price = getSaNamePrice(customer,inventory,department,name);
                 if(price == null || "".equals(price)){
                     continue;
                 }else{
@@ -107,21 +41,34 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public String getSaNamePrice(String customer, String inventory, String name) {
+    public String getSaNamePrice(String customer, String inventory,String department,String name) {
         //根据 每一个 customer inventory 和 售价带出策略的name 去 获取 对应的 价格,第一个没有就去拿 第二个，直到 拿到 有内容的 为止。
         String price = "";
         switch (name){
             case "部门最新售价":
-
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("iddepartment",department);//部门id
+                params.put("idinventory",inventory);
+                price = orderMapper.getDepartmentSalePrice(params);
                 break;
             case "客户最新售价":
-
+                Map<String,String> param = new HashMap<String,String>();
+                param.put("idcustomer",customer);
+                param.put("idinventory",inventory);
+                price = orderMapper.getCustmerSalePrice(param);
                 break;
             case "客户协议价":
-
+                Map<String,String> paramxy = new HashMap<String,String>();
+                paramxy.put("idcustomer",customer);
+                paramxy.put("idinventory",inventory);
+                price = orderMapper.getCustmerxieyiPrice(paramxy);
                 break;
             case "部门批发价":
-
+                Map<String,String> paramPIFA = new HashMap<String,String>();
+                paramPIFA.put("iddepartment",department);
+                paramPIFA.put("idcustomer",customer);
+                paramPIFA.put("idinventory",inventory);
+                price = orderMapper.getDepartmentPIFAprice(paramPIFA);
                 break;
             case "客户折扣":
 
@@ -130,10 +77,28 @@ public class TokenServiceImpl implements TokenService {
 
                 break;
             case "存货批发价":
-
+                Map<String,String> paramInventoryPrice = new HashMap<String,String>();
+                //paramInventoryPrice.put("iddepartment",department);
+                paramInventoryPrice.put("idcustomer",customer);
+                paramInventoryPrice.put("idinventory",inventory);
+                price = orderMapper.getInventoryPIFAprice(paramInventoryPrice);
                 break;
             case "存货数量档位价格":
 
+                break;
+            case "客户最新进价加价":
+                Map<String,String> paramCustomerLastPrice = new HashMap<String,String>();
+                //paramCustomerLastPrice.put("iddepartment",department);
+                paramCustomerLastPrice.put("idcustomer",customer);
+                paramCustomerLastPrice.put("idinventory",inventory);
+                price = orderMapper.getCustomerLastprice(paramCustomerLastPrice);
+                break;
+            case "存货最新进价加价":
+                Map<String,String> paramInventoryLastPrice = new HashMap<String,String>();
+                //paramInventoryLastPrice.put("iddepartment",department);
+                //paramInventoryLastPrice.put("idcustomer",customer);
+                paramInventoryLastPrice.put("idinventory",inventory);
+                price = orderMapper.getInventoryLastprice(paramInventoryLastPrice);
                 break;
         }
         return price;

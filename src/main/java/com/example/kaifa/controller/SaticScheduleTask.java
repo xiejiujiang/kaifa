@@ -18,14 +18,22 @@ public class SaticScheduleTask {
     private TokenService tokenService;
 
     //每天凌晨3点执行
-    @Scheduled(cron = "0 0 3 * * ?")
+    //@Scheduled(cron = "0 0 18 * * ?")
     private void configureTasks() {
         System.err.println("-------------------- 执行静态定时任务开始: " + LocalDateTime.now() + "--------------------");
-        try{
+        /*try{
             //tokenService.refreshToken();
         }catch (Exception e){
             e.printStackTrace();
         }
+        System.err.println("-------------------- 执行静态定时任务结束: " + LocalDateTime.now() + "--------------------");
+
+        // 开启一个 线程，只用来处理比较耗时，但又不关心结果的 逻辑
+        new Thread(){
+            public void run(){
+
+            }
+        }.start();*/
         System.err.println("-------------------- 执行静态定时任务结束: " + LocalDateTime.now() + "--------------------");
     }
 }
