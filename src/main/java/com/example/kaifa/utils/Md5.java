@@ -27,4 +27,8 @@ public class Md5 {
         }
         return sb.toString();
     }
+
+    public static void main(String[] args) {
+        System.out.println(md5("all"+"20220825"));
+    }
 }

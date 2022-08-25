@@ -1,5 +1,6 @@
 package com.example.kaifa.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.kaifa.service.TokenService;
 import com.example.kaifa.utils.*;
 import org.slf4j.Logger;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/token")
@@ -51,6 +54,23 @@ public class TokenController {
         }else{
             String price = "999999";
             return price;
+        }
+    }
+
+
+    // 免费给千佛做的，用来获取T+的 往来单位存货设置表
+    @RequestMapping(value="/getpartnerinventory", method = {RequestMethod.GET,RequestMethod.POST})
+    public @ResponseBody String getpartnerinventory(HttpServletRequest request, HttpServletResponse response){
+        String customer = request.getParameter("customer");//传入 all 或者 具体某个 往来编码
+        String sign = request.getParameter("sign");
+        String today = new SimpleDateFormat("yyyyMMdd").format(new Date());//当日
+        if(sign != null && !sign.equals("")
+                && customer != null && !customer.equals("")
+                && sign.equals(Md5.md5(customer+today))){
+            List<Map<String,String>> datalist = tokenService.getpartnerinventory(customer);
+            return JSONObject.toJSONString(datalist);
+        }else{
+            return "参数错误";
         }
     }
 }

@@ -32,4 +32,8 @@ public interface orderMapper {
 
     //获取 存货最新进价加价
     String getInventoryLastprice(Map<String,String> map);
+
+    List<Map<String,String>> getallpartnerinventory();
+
+    List<Map<String,String>> getpartnerinventory(String customer);
 }

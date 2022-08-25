@@ -85,4 +85,25 @@
         from AA_InventoryPrice t1
         where t1.idInventory = #{idinventory}
     </select>
+
+    <!--往来单位编码，往来单位名称，存货编码，存货名称，规格型号，主计量单位，往来单位存货编码，主计量单位ID-->
+    <select id="getallpartnerinventory" resultType="java.util.Map">
+        select t2.code as partnercode,t2.name as partnername,
+               t3.code as inventorycode,t3.name as inventoryname,
+               t3.specification,t4.name as unitname,t4.id as unintid,
+               t1.code as  partnerInvenCode,t1.name as partnerInvenName
+        from AA_InventoryMutiCode t1,AA_partner t2,AA_Inventory t3,AA_Unit t4
+        where t1.idcustomer = t2.id and t1.idinventory = t3.id and t3.idunit = t4.id
+    </select>
+
+    <!--往来单位编码，往来单位名称，存货编码，存货名称，规格型号，主计量单位，往来单位存货编码，主计量单位ID-->
+    <select id="getpartnerinventory" resultType="java.util.Map" parameterType="java.lang.String">
+        select t2.code as partnercode,t2.name as partnername,
+               t3.code as inventorycode,t3.name as inventoryname,
+               t3.specification,t4.name as unitname,t4.id as unintid,
+               t1.code as  partnerInvenCode,t1.name as partnerInvenName
+        from AA_InventoryMutiCode t1,AA_partner t2,AA_Inventory t3,AA_Unit t4
+        where t1.idcustomer = t2.id and t1.idinventory = t3.id and t3.idunit = t4.id
+        and t2.code = #{customer}
+    </select>
 </mapper>

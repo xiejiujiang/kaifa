@@ -103,4 +103,17 @@ public class TokenServiceImpl implements TokenService {
         }
         return price;
     }
+
+
+    @Override
+    public List<Map<String,String>> getpartnerinventory(String customer) {
+        //往来单位编码，往来单位名称，存货编码，存货名称，规格型号，主计量单位，往来单位存货编码，主计量单位ID
+        if("all".equals(customer)){
+            List<Map<String,String>> datalist = orderMapper.getallpartnerinventory();
+            return datalist;
+        }else{
+            List<Map<String,String>> datalist = orderMapper.getpartnerinventory(customer);
+            return datalist;
+        }
+    }
 }
