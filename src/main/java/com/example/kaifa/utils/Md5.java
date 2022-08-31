@@ -29,6 +29,6 @@ public class Md5 {
     }
 
     public static void main(String[] args) {
-        System.out.println(md5("all"+"20220825"));
+        System.out.println(md5("0010004"+"20220826"));
     }
 }
