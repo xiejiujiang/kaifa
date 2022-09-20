@@ -35,7 +35,8 @@ public class Md5 {
     }
 
     public static void main(String[] args) {
+//http://47.108.79.26:9998/kaifa/token/getsaleprice?customer=0010004&inventory=23100&department=02&sign=8c91707751d66218c6f0b3b7727a9a0b
         //customer+inventory+department+today
-       System.out.println(Md5.md5("0010004"+"80136"+"02"+"20220919"));
+       System.out.println(Md5.md5("0010004"+"23127"+"02"+"20220920"));
     }
 }

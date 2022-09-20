@@ -16,6 +16,15 @@
         order by t1.createdtime desc
     </select>
 
+    <select id="getDepartmentPriceByInventoryAndUnitCode" parameterType="java.util.Map" resultType="java.lang.String">
+        select TOP 1
+               t1.unittaxprice  as price
+        from AA_DepartmentInventoryPriceTrace t1,AA_Inventory t3,AA_department t4,AA_unit t5
+        where t1.idinventory = t3.id and t1.idDepartment = t4.id
+        and t3.code = #{idinventory} and t4.code = #{iddepartment} and t1.idunit = t5.id and t5.code = #{code}
+        order by t1.createdtime desc
+    </select>
+
     <select id="getCustmerSalePrice" parameterType="java.util.Map" resultType="java.util.Map">
         select top 1
         t2.taxPrice as price,t2.idInventory,t5.code
@@ -26,12 +35,31 @@
         order by t1.createdtime desc
     </select>
 
+    <select id="getgetCustmerSalePriceByInventoryAndUnitCode" parameterType="java.util.Map" resultType="java.lang.String">
+        select top 1
+        t1.unittaxprice as price
+        from AA_CustomerInventoryPriceTrace t1,AA_Inventory t3,AA_partner t4,AA_unit t5
+        where t1.idInventory = t3.id and t1.idcustomer = t4.id
+        and t3.code = #{idinventory} and t4.code = #{idcustomer}  and t1.idunit = t5.id and t5.code = #{code}
+        order by t1.createdtime desc
+    </select>
+
     <select id="getCustmerxieyiPrice" parameterType="java.util.Map" resultType="java.util.Map">
         select top 1
         t1.agreementPrice as price,t2.id as idInventory,t4.code
         from AA_CustomerInventoryPrice t1,AA_Inventory t2,AA_partner t3,AA_unit t4
         where t1.idInventory = t2.id and t2.code = #{idinventory}
         and t1.idcustomer = t3.id and t3.code = #{idcustomer} and t1.idunit = t4.id
+        order by t1.id desc
+    </select>
+
+
+    <select id="getCustmerxieyiPriceByInventoryAndUnitCode" parameterType="java.util.Map" resultType="java.lang.String">
+        select top 1
+        t1.agreementPrice as price
+        from AA_CustomerInventoryPrice t1,AA_Inventory t2,AA_partner t3,AA_unit t4
+        where t1.idInventory = t2.id and t2.code = #{idinventory}
+          and t1.idcustomer = t3.id and t3.code = #{idcustomer} and t1.idunit = t4.id and t4.code = #{code}
         order by t1.id desc
     </select>
 
@@ -56,6 +84,29 @@
         order by t1.id desc
     </select>
 
+
+    <select id="getDepartmentPIFApriceByInventoryAndUnitCode" parameterType="java.util.Map" resultType="java.lang.String">
+        select top 1 (case
+                    when t2.priceGrade = 442 then t1.retailPriceFormula
+                    when t2.priceGrade = 2366 then t1.retailPrice
+                    when t2.priceGrade = 440 then t1.level1Price
+                    when t2.priceGrade = 105 then t1.level2Price
+                    when t2.priceGrade = 56 then t1.level3Price
+                    when t2.priceGrade = 27 then t1.level4Price
+                    when t2.priceGrade = 383 then t1.level5Price
+                    when t2.priceGrade = 1328 then t1.level6Price
+                    when t2.priceGrade = 1329 then t1.level7Price
+                    when t2.priceGrade = 1330 then t1.level8Price
+                    when t2.priceGrade = 1331 then t1.level9Price
+                    when t2.priceGrade = 1332 then t1.level10Price
+            end ) as price
+        from AA_DepartmentInventoryPrice t1,AA_partner t2,AA_Inventory t3,AA_department t4,AA_unit t5
+        where t1.idInventory = t3.id and t3.code = #{idinventory}
+        and t1.idDepartment = t4.id and t4.code = #{iddepartment} and t2.code = #{idcustomer} and t1.idunit = t5.id
+        and t5.code = #{code}
+        order by t1.id desc
+    </select>
+
     <select id="getInventoryPIFAprice" parameterType="java.util.Map" resultType="java.util.Map">
         select top 1 (case
                     when t2.priceGrade = 442 then t1.retailPriceFormula
@@ -76,6 +127,27 @@
         order by t1.id desc
     </select>
 
+    <select id="getInventoryPIFApriceByInventoryAndUnitCode" parameterType="java.util.Map" resultType="java.lang.String">
+        select top 1 (case
+                    when t2.priceGrade = 442 then t1.retailPriceFormula
+                    when t2.priceGrade = 2366 then t1.retailPrice
+                    when t2.priceGrade = 440 then t1.invSCost1
+                    when t2.priceGrade = 105 then t1.invSCost2
+                    when t2.priceGrade = 56 then t1.invSCost3
+                    when t2.priceGrade = 27 then t1.invSCost4
+                    when t2.priceGrade = 383 then t1.invSCost5
+                    when t2.priceGrade = 1328 then t1.invSCost6
+                    when t2.priceGrade = 1329 then t1.invSCost7
+                    when t2.priceGrade = 1330 then t1.invSCost8
+                    when t2.priceGrade = 1331 then t1.invSCost9
+                    when t2.priceGrade = 1332 then t1.invSCost10
+            end ) as price
+        from AA_InventoryPrice t1,AA_partner t2,AA_Inventory t3,AA_unit t4
+        where t1.idInventory = t3.id and t3.code = #{idinventory}  and t2.code = #{idcustomer} and t1.idunit = t4.id
+        and t4.code = #{code}
+        order by t1.id desc
+    </select>
+
     <select id="getCustomerLastprice" parameterType="java.util.Map" resultType="java.util.Map">
         select TOP 1
         (t2.price*(1+t1.increasePriceRate)) as price,t3.id as idInventory,t5.code
@@ -90,11 +162,34 @@
         order by t1.id desc
     </select>
 
+    <select id="getCustomerLastpriceByInventoryAndUnitCode" parameterType="java.util.Map" resultType="java.lang.String">
+        select TOP 1
+        (t2.price*(1+t1.increasePriceRate)) as price
+        from AA_CustomerInventoryPrice t1,
+             (select top 1 k2.idinventory,k2.origDiscountPrice as price
+              from PU_PurchaseArrival k1,PU_PurchaseArrival_b k2,AA_Inventory k3
+              where k1.voucherState = 189 and k1.id = k2.idPurchaseArrivalDTO and k2.idinventory = k3.id and k3.code = #{idinventory}
+              order by k2.id desc)t2,AA_Inventory t3,AA_partner t4,AA_unit t5
+        where t1.idinventory = t3.id and t3.code = #{idinventory}
+          and t1.idcustomer = t4.id and t4.code = #{idcustomer}
+          and t1.idinventory = t2.idinventory and t1.idunit = t5.id and t5.code = #{code}
+        order by t1.id desc
+    </select>
+
     <select id="getInventoryLastprice" parameterType="java.util.Map" resultType="java.util.Map">
         select TOP 1
         (t1.latestPPrice*(1+t1.MarkupRate)) as price,t2.id as idInventory,t3.code
         from AA_InventoryPrice t1,AA_Inventory t2,AA_unit t3
         where t1.idInventory = t2.id and t2.code = #{idinventory} and t1.idunit = t3.id
+        order by t1.id desc
+    </select>
+
+    <select id="getInventoryLastpriceByInventoryAndUnitCode" parameterType="java.util.Map" resultType="java.lang.String">
+        select TOP 1
+        (t1.latestPPrice*(1+t1.MarkupRate)) as price
+        from AA_InventoryPrice t1,AA_Inventory t2,AA_unit t3
+        where t1.idInventory = t2.id and t2.code = #{idinventory} and t1.idunit = t3.id
+        and t3.code = #{code}
         order by t1.id desc
     </select>
 

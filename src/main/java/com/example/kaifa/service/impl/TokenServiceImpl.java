@@ -84,7 +84,19 @@ public class TokenServiceImpl implements TokenService {
                         resultstr.put("unitID",unitMap.get("did").toString());
                         resultstr.put("Code",unitMap.get("dcode").toString());
                         resultstr.put("Name",unitMap.get("dname").toString());
-                        resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+
+                        // 如果 此商品 此单位  在 此价格策略中 找到了 就用，没找到，才用下面这个 乘积
+                        Map<String,Object> map1 = new HashMap<String,Object>();
+                        map1.put("idinventory",inventory);
+                        map1.put("iddepartment",department);
+                        map1.put("idcustomer",customer);
+                        map1.put("code",unitMap.get("dcode").toString());
+                        String unitprice = orderMapper.getDepartmentPriceByInventoryAndUnitCode(map1);
+                        if(unitprice != null && !"".equals(unitprice)){
+                            resultstr.put("price",unitprice);
+                        }else{
+                            resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+                        }
                         ll.add(resultstr);
                     }
                     JSONArray ja = new JSONArray();
@@ -122,7 +134,19 @@ public class TokenServiceImpl implements TokenService {
                         resultstr.put("unitID",unitMap.get("did").toString());
                         resultstr.put("Code",unitMap.get("dcode").toString());
                         resultstr.put("Name",unitMap.get("dname").toString());
-                        resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+
+                        // 如果 此商品 此单位  在 此价格策略中 找到了 就用，没找到，才用下面这个 乘积
+                        Map<String,Object> map1 = new HashMap<String,Object>();
+                        map1.put("idinventory",inventory);
+                        map1.put("iddepartment",department);
+                        map1.put("idcustomer",customer);
+                        map1.put("code",unitMap.get("dcode").toString());
+                        String unitprice = orderMapper.getgetCustmerSalePriceByInventoryAndUnitCode(map1);
+                        if(unitprice != null && !"".equals(unitprice)){
+                            resultstr.put("price",unitprice);
+                        }else{
+                            resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+                        }
                         ll.add(resultstr);
                     }
                     JSONArray ja = new JSONArray();
@@ -160,7 +184,19 @@ public class TokenServiceImpl implements TokenService {
                         resultstr.put("unitID",unitMap.get("did").toString());
                         resultstr.put("Code",unitMap.get("dcode").toString());
                         resultstr.put("Name",unitMap.get("dname").toString());
-                        resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+
+                        // 如果 此商品 此单位  在 此价格策略中 找到了 就用，没找到，才用下面这个 乘积
+                        Map<String,Object> map1 = new HashMap<String,Object>();
+                        map1.put("idinventory",inventory);
+                        map1.put("iddepartment",department);
+                        map1.put("idcustomer",customer);
+                        map1.put("code",unitMap.get("dcode").toString());
+                        String unitprice = orderMapper.getCustmerxieyiPriceByInventoryAndUnitCode(map1);
+                        if(unitprice != null && !"".equals(unitprice)){
+                            resultstr.put("price",unitprice);
+                        }else{
+                            resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+                        }
                         ll.add(resultstr);
                     }
                     JSONArray ja = new JSONArray();
@@ -199,7 +235,19 @@ public class TokenServiceImpl implements TokenService {
                         resultstr.put("unitID",unitMap.get("did").toString());
                         resultstr.put("Code",unitMap.get("dcode").toString());
                         resultstr.put("Name",unitMap.get("dname").toString());
-                        resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+
+                        // 如果 此商品 此单位  在 此价格策略中 找到了 就用，没找到，才用下面这个 乘积
+                        Map<String,Object> map1 = new HashMap<String,Object>();
+                        map1.put("idinventory",inventory);
+                        map1.put("iddepartment",department);
+                        map1.put("idcustomer",customer);
+                        map1.put("code",unitMap.get("dcode").toString());
+                        String unitprice = orderMapper.getDepartmentPIFApriceByInventoryAndUnitCode(map1);
+                        if(unitprice != null && !"".equals(unitprice)){
+                            resultstr.put("price",unitprice);
+                        }else{
+                            resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+                        }
                         ll.add(resultstr);
                     }
                     JSONArray ja = new JSONArray();
@@ -244,7 +292,19 @@ public class TokenServiceImpl implements TokenService {
                         resultstr.put("unitID",unitMap.get("did").toString());
                         resultstr.put("Code",unitMap.get("dcode").toString());
                         resultstr.put("Name",unitMap.get("dname").toString());
-                        resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+
+                        // 如果 此商品 此单位  在 此价格策略中 找到了 就用，没找到，才用下面这个 乘积
+                        Map<String,Object> map1 = new HashMap<String,Object>();
+                        map1.put("idinventory",inventory);
+                        map1.put("iddepartment",department);
+                        map1.put("idcustomer",customer);
+                        map1.put("code",unitMap.get("dcode").toString());
+                        String unitprice = orderMapper.getInventoryPIFApriceByInventoryAndUnitCode(map1);
+                        if(unitprice != null && !"".equals(unitprice)){
+                            resultstr.put("price",unitprice);
+                        }else{
+                            resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+                        }
                         ll.add(resultstr);
                     }
                     JSONArray ja = new JSONArray();
@@ -286,7 +346,19 @@ public class TokenServiceImpl implements TokenService {
                         resultstr.put("unitID",unitMap.get("did").toString());
                         resultstr.put("Code",unitMap.get("dcode").toString());
                         resultstr.put("Name",unitMap.get("dname").toString());
-                        resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+
+                        // 如果 此商品 此单位  在 此价格策略中 找到了 就用，没找到，才用下面这个 乘积
+                        Map<String,Object> map1 = new HashMap<String,Object>();
+                        map1.put("idinventory",inventory);
+                        map1.put("iddepartment",department);
+                        map1.put("idcustomer",customer);
+                        map1.put("code",unitMap.get("dcode").toString());
+                        String unitprice = orderMapper.getCustomerLastpriceByInventoryAndUnitCode(map1);
+                        if(unitprice != null && !"".equals(unitprice)){
+                            resultstr.put("price",unitprice);
+                        }else{
+                            resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+                        }
                         ll.add(resultstr);
                     }
                     JSONArray ja = new JSONArray();
@@ -325,7 +397,19 @@ public class TokenServiceImpl implements TokenService {
                         resultstr.put("unitID",unitMap.get("did").toString());
                         resultstr.put("Code",unitMap.get("dcode").toString());
                         resultstr.put("Name",unitMap.get("dname").toString());
-                        resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+
+                        // 如果 此商品 此单位  在 此价格策略中 找到了 就用，没找到，才用下面这个 乘积
+                        Map<String,Object> map1 = new HashMap<String,Object>();
+                        map1.put("idinventory",inventory);
+                        map1.put("iddepartment",department);
+                        map1.put("idcustomer",customer);
+                        map1.put("code",unitMap.get("dcode").toString());
+                        String unitprice = orderMapper.getInventoryLastpriceByInventoryAndUnitCode(map1);
+                        if(unitprice != null && !"".equals(unitprice)){
+                            resultstr.put("price",unitprice);
+                        }else{
+                            resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
+                        }
                         ll.add(resultstr);
                     }
                     JSONArray ja = new JSONArray();

@@ -40,27 +40,33 @@ public class TokenController {
     // 提供给 第三方的接口，用于 调取 获取 当前 客户，当前商品的 T+的 销售策略 带出的 价格！
     @RequestMapping(value="/getsaleprice", method = {RequestMethod.GET,RequestMethod.POST})
     public @ResponseBody String getsaleprice(HttpServletRequest request, HttpServletResponse response){
-        String customer = request.getParameter("customer");
-        String inventory = request.getParameter("inventory");
-        String department = request.getParameter("department");
-        String sign = request.getParameter("sign");
-        String today = new SimpleDateFormat("yyyyMMdd").format(new Date());//当日
-        if(sign != null && !sign.equals("")
-                && customer != null && !customer.equals("")
-                && inventory != null && !inventory.equals("")
-                && department != null && !department.equals("")
-                && sign.equals(Md5.md5(customer+inventory+department+today))){
-            System.out.println("传入的参数： customer ====== " + customer + ",inventory ====== " + inventory + ",department ====== " + department);
-            String price = tokenService.getsaleprice(customer,inventory,department);
-            System.out.println("最外层 --------------- price ====== " + price);
-            if(price == null || "".equals(price) || "null".equals(price)){
-                return "999999";
+        String IP = RequestIPUtils.getIpAddr(request);//47.108.88.144
+        System.out.println("获取价格请求 IP ======= " + IP);
+        if("47.108.88.144".equals(IP)){
+            String customer = request.getParameter("customer");
+            String inventory = request.getParameter("inventory");
+            String department = request.getParameter("department");
+            String sign = request.getParameter("sign");
+            String today = new SimpleDateFormat("yyyyMMdd").format(new Date());//当日
+            if(sign != null && !sign.equals("")
+                    && customer != null && !customer.equals("")
+                    && inventory != null && !inventory.equals("")
+                    && department != null && !department.equals("")
+                    && sign.equals(Md5.md5(customer+inventory+department+today))){
+                System.out.println("传入的参数： customer ====== " + customer + ",inventory ====== " + inventory + ",department ====== " + department);
+                String price = tokenService.getsaleprice(customer,inventory,department);
+                System.out.println("最外层 --------------- price ====== " + price);
+                if(price == null || "".equals(price) || "null".equals(price)){
+                    return "999999";
+                }else{
+                    return price;
+                }
             }else{
+                String price = "999999";
                 return price;
             }
         }else{
-            String price = "999999";
-            return price;
+            return "999999";
         }
     }
 
@@ -68,14 +74,20 @@ public class TokenController {
     // 免费给千佛做的，用来获取T+的 往来单位存货设置表
     @RequestMapping(value="/getpartnerinventory", method = {RequestMethod.GET,RequestMethod.POST})
     public @ResponseBody String getpartnerinventory(HttpServletRequest request, HttpServletResponse response){
-        String customer = request.getParameter("customer");//传入 all 或者 具体某个 往来编码
-        String sign = request.getParameter("sign");
-        String today = new SimpleDateFormat("yyyyMMdd").format(new Date());//当日
-        if(sign != null && !sign.equals("")
-                && customer != null && !customer.equals("")
-                && sign.equals(Md5.md5(customer+today))){
-            List<Map<String,String>> datalist = tokenService.getpartnerinventory(customer);
-            return JSONObject.toJSONString(datalist);
+        String IP = RequestIPUtils.getIpAddr(request);//47.108.88.144
+        System.out.println("获取往来单位存货设置 IP ======= " + IP);
+        if("47.108.88.144".equals(IP)){
+            String customer = request.getParameter("customer");//传入 all 或者 具体某个 往来编码
+            String sign = request.getParameter("sign");
+            String today = new SimpleDateFormat("yyyyMMdd").format(new Date());//当日
+            if(sign != null && !sign.equals("")
+                    && customer != null && !customer.equals("")
+                    && sign.equals(Md5.md5(customer+today))){
+                List<Map<String,String>> datalist = tokenService.getpartnerinventory(customer);
+                return JSONObject.toJSONString(datalist);
+            }else{
+                return "参数错误";
+            }
         }else{
             return "参数错误";
         }

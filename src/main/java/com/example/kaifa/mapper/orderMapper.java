@@ -40,4 +40,18 @@ public interface orderMapper {
     List<Map<String,Object>> getInventoryUnitMapByCode(String inventory);
 
     String getRateByInventoryAndUnit(Map<String,Object> map);
+
+    String getDepartmentPriceByInventoryAndUnitCode(Map<String,Object> map);
+
+    String getgetCustmerSalePriceByInventoryAndUnitCode(Map<String,Object> map);
+
+    String getCustmerxieyiPriceByInventoryAndUnitCode(Map<String,Object> map);
+
+    String getDepartmentPIFApriceByInventoryAndUnitCode(Map<String,Object> map);
+
+    String getInventoryPIFApriceByInventoryAndUnitCode(Map<String,Object> map);
+
+    String getCustomerLastpriceByInventoryAndUnitCode(Map<String,Object> map);
+
+    String getInventoryLastpriceByInventoryAndUnitCode(Map<String,Object> map);
 }
