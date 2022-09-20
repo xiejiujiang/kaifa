@@ -13,27 +13,31 @@ public interface orderMapper {
     List<Map<String,String>> getSalePriceList();
 
     //获取部门最新售价
-    String getDepartmentSalePrice(Map<String,String> map);
+    Map<String,Object> getDepartmentSalePrice(Map<String,String> map);
 
     //获取客户最新售价
-    String getCustmerSalePrice(Map<String,String> map);
+    Map<String,Object> getCustmerSalePrice(Map<String,String> map);
 
     //获取客户协议价
-    String getCustmerxieyiPrice(Map<String,String> map);
+    Map<String,Object> getCustmerxieyiPrice(Map<String,String> map);
 
     //获取部门批发价
-    String getDepartmentPIFAprice(Map<String,String> map);
+    Map<String,Object> getDepartmentPIFAprice(Map<String,String> map);
 
     //获取 存货批发价
-    String getInventoryPIFAprice(Map<String,String> map);
+    Map<String,Object> getInventoryPIFAprice(Map<String,String> map);
 
     //获取 客户最新进价加价
-    String getCustomerLastprice(Map<String,String> map);
+    Map<String,Object> getCustomerLastprice(Map<String,String> map);
 
     //获取 存货最新进价加价
-    String getInventoryLastprice(Map<String,String> map);
+    Map<String,Object> getInventoryLastprice(Map<String,String> map);
 
     List<Map<String,String>> getallpartnerinventory();
 
     List<Map<String,String>> getpartnerinventory(String customer);
+
+    List<Map<String,Object>> getInventoryUnitMapByCode(String inventory);
+
+    String getRateByInventoryAndUnit(Map<String,Object> map);
 }

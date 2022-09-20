@@ -48,9 +48,16 @@ public class TokenController {
         if(sign != null && !sign.equals("")
                 && customer != null && !customer.equals("")
                 && inventory != null && !inventory.equals("")
+                && department != null && !department.equals("")
                 && sign.equals(Md5.md5(customer+inventory+department+today))){
+            System.out.println("传入的参数： customer ====== " + customer + ",inventory ====== " + inventory + ",department ====== " + department);
             String price = tokenService.getsaleprice(customer,inventory,department);
-            return price;
+            System.out.println("最外层 --------------- price ====== " + price);
+            if(price == null || "".equals(price) || "null".equals(price)){
+                return "999999";
+            }else{
+                return price;
+            }
         }else{
             String price = "999999";
             return price;

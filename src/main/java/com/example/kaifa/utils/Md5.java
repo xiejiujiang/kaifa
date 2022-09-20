@@ -1,8 +1,14 @@
 package com.example.kaifa.utils;
 
+import com.alibaba.fastjson.JSONArray;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Md5 {
 
@@ -29,6 +35,7 @@ public class Md5 {
     }
 
     public static void main(String[] args) {
-        System.out.println(md5("0010004"+"20220826"));
+        //customer+inventory+department+today
+       System.out.println(Md5.md5("0010004"+"80136"+"02"+"20220919"));
     }
 }
