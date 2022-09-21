@@ -7,7 +7,7 @@ public interface TokenService {
 
     public String getsaleprice(String customer,String inventory,String department);
 
-    public String getSaNamePrice(String customer,String inventory,String department,String name);
+    public String getSaNameUnitPrice(String customer,String inventory,String department,String name,String discount,String dcodee);
 
     public List<Map<String,String>> getpartnerinventory(String customer);
 }

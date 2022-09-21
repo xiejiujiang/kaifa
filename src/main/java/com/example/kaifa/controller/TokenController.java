@@ -42,7 +42,7 @@ public class TokenController {
     public @ResponseBody String getsaleprice(HttpServletRequest request, HttpServletResponse response){
         String IP = RequestIPUtils.getIpAddr(request);//47.108.88.144
         System.out.println("获取价格请求 IP ======= " + IP);
-        if("47.108.88.144".equals(IP)){
+        //if("47.108.88.144".equals(IP)){
             String customer = request.getParameter("customer");
             String inventory = request.getParameter("inventory");
             String department = request.getParameter("department");
@@ -65,9 +65,9 @@ public class TokenController {
                 String price = "999999";
                 return price;
             }
-        }else{
+        /*}else{
             return "999999";
-        }
+        }*/
     }
 
 
@@ -76,7 +76,7 @@ public class TokenController {
     public @ResponseBody String getpartnerinventory(HttpServletRequest request, HttpServletResponse response){
         String IP = RequestIPUtils.getIpAddr(request);//47.108.88.144
         System.out.println("获取往来单位存货设置 IP ======= " + IP);
-        if("47.108.88.144".equals(IP)){
+        //if("47.108.88.144".equals(IP)){
             String customer = request.getParameter("customer");//传入 all 或者 具体某个 往来编码
             String sign = request.getParameter("sign");
             String today = new SimpleDateFormat("yyyyMMdd").format(new Date());//当日
@@ -88,8 +88,8 @@ public class TokenController {
             }else{
                 return "参数错误";
             }
-        }else{
+        /*}else{
             return "参数错误";
-        }
+        }*/
     }
 }

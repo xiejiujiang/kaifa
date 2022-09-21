@@ -10,7 +10,7 @@ import java.util.Map;
 @Repository
 public interface orderMapper {
 
-    List<Map<String,String>> getSalePriceList();
+    List<Map<String,Object>> getSalePriceList();
 
     //获取部门最新售价
     Map<String,Object> getDepartmentSalePrice(Map<String,String> map);

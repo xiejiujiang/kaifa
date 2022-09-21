@@ -25,84 +25,79 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public String getsaleprice(String customer, String inventory,String department) {
         String price = "";
-        List<Map<String,String>> pricelist = orderMapper.getSalePriceList();//获取 账套里面 的 销售带出策略的 明细, 已经按照 级别 排序了。
-        if(pricelist != null && pricelist.size() != 0){//name,isInUse,priorityLevel
-            //for(Map<String,String> map : pricelist){
-            for(int i = 0;i < pricelist.size(); i++){
-                Map<String,String> map = pricelist.get(i);
-                String name = map.get("name");
-                //根据 每一个 customer inventory 和 售价带出策略的name 去 获取 对应的 价格,第一个没有就去拿 第二个，直到 拿到 有内容的 为止。
-                System.out.println("第"+i+"个: --------------- name = " + name);
-                price = getSaNamePrice(customer,inventory,department,name);
-                System.out.println("第"+i+"个: --------------- price = " + price);
-                if(price == null || "".equals(price)){
-                    continue;
-                }else{
+        List<Map<String,Object>> inventoryUnit = orderMapper.getInventoryUnitMapByCode(inventory);
+        if(inventoryUnit != null && inventoryUnit.size() == 1){
+            //单计量的情况下
+            String dcode = inventoryUnit.get(0).get("dcode").toString();
+            List<Map<String,Object>> pricelist = orderMapper.getSalePriceList();//获取 账套里面 的 销售带出策略的 明细, 已经按照 级别 排序了。
+            if(pricelist != null && pricelist.size() != 0){//name,isInUse,priorityLevel
+                //for(Map<String,String> map : pricelist){
+                for(int i = 0;i < pricelist.size(); i++){
+                    Map<String,Object> map = pricelist.get(i);
+                    String name = map.get("name").toString();
+                    String discount = map.get("discount").toString();//售价带出策略 处 设置的 加价率
+                    //根据 每一个 customer inventory 和 售价带出策略的name 去 获取 对应的 价格,第一个没有就去拿 第二个，直到 拿到 有内容的 为止。
+                    System.out.println("第"+i+"个: --------------- name = " + name);
+                    price = getSaNameUnitPrice(customer,inventory,department,name,discount,dcode);
+                    System.out.println("第"+i+"个: --------------- price = " + price);
+                    if(price == null || "".equals(price)){
+                        continue;
+                    }else{
+                        return price;
+                    }
+                }
+                return price;
+            }else{
+                return "999999";
+            }
+        }else{
+            List<Map<String,Object>> pricelist = orderMapper.getSalePriceList();//获取 账套里面 的 销售带出策略的 明细, 已经按照 级别 排序了。
+            for(Map<String,Object> mkk : inventoryUnit){
+                String dcode = mkk.get("dcode").toString();
+                if(pricelist != null && pricelist.size() != 0){//name,isInUse,priorityLevel
+                    //for(Map<String,String> map : pricelist){
+                    for(int i = 0;i < pricelist.size(); i++){
+                        Map<String,Object> map = pricelist.get(i);
+                        String name = map.get("name").toString();
+                        String discount = map.get("discount").toString();//售价带出策略 处 设置的 加价率
+                        //根据 每一个 customer inventory 和 售价带出策略的name 去 获取 对应的 价格,第一个没有就去拿 第二个，直到 拿到 有内容的 为止。
+                        System.out.println("第"+i+"个: --------------- name = " + name);
+                        price = getSaNameUnitPrice(customer,inventory,department,name,discount,dcode);
+                        System.out.println("第"+i+"个: --------------- price = " + price);
+                        if(price == null || "".equals(price)){
+                            continue;
+                        }else{
+                            return price;
+                        }
+                    }
                     return price;
+                }else{
+                    return "999999";
                 }
             }
-            return price;
-        }else{
-            return "999999";
+            return "";
         }
     }
 
+
+    //根据 每一个 customer inventory 和 售价带出策略的name 去 获取 对应的 价格,第一个没有就去拿 第二个，直到 拿到 有内容的 为止。
+    // [{unitID:1,Code:222,Name:'桶',price:'30'},{unitID:1,Code:222,Name:'件',price:'30'}]
+    // 09-21 做了修改，现在 是 每一个 商品 的 某一个 单位，对应的 价格策略 带出的 价格 是多少
     @Override
-    public String getSaNamePrice(String customer, String inventory,String department,String name) {
-        //根据 每一个 customer inventory 和 售价带出策略的name 去 获取 对应的 价格,第一个没有就去拿 第二个，直到 拿到 有内容的 为止。
-        // [{unitID:1,Code:222,Name:'桶',price:'30'},{unitID:1,Code:222,Name:'件',price:'30'}]
+    public String getSaNameUnitPrice(String customer, String inventory,String department,String name,String discount,String dcodee) {
         List<Map<String,Object>> inventoryUnit = orderMapper.getInventoryUnitMapByCode(inventory);
+
         String price = "";
         switch (name){
             case "部门最新售价":
-                Map<String,String> params = new HashMap<String,String>();
-                params.put("iddepartment",department);//部门id
-                params.put("idinventory",inventory);
-                Map<String,Object> priceMap = orderMapper.getDepartmentSalePrice(params);
-                if(priceMap == null || priceMap.get("price") == null){
-                    return "";
-                }
-                if(inventoryUnit != null && inventoryUnit.size() == 1){
-                    Map<String,String> mm = new HashMap<String,String>();
-                    mm.put("unitID",inventoryUnit.get(0).get("id").toString());
-                    mm.put("Code",inventoryUnit.get(0).get("code").toString());
-                    mm.put("Name",inventoryUnit.get(0).get("name").toString());
-                    mm.put("price",priceMap.get("price").toString());
-                    List<Map<String,String>> ll = new ArrayList<Map<String,String>>();
-                    ll.add(mm);
-                    JSONArray ja = new JSONArray();
-                    ja.addAll(ll);
-                    price = ja.toJSONString();
-                }else{
-                    // 那么 根据 priceMap 查询到的这个 存货：单位：价格   计算出 这个存货对应的主计量单位 对应的 价格！
-                    String rate = orderMapper.getRateByInventoryAndUnit(priceMap);
-                    String mainUnitPirce = ""+(Float.valueOf(priceMap.get("price").toString()) / Float.valueOf(rate)) ; //主计量单位对应的价格
-                    List<Map<String,String>> ll = new ArrayList<Map<String,String>>();
-                    for(Map<String,Object> unitMap : inventoryUnit){
-                        String changeRate = unitMap.get("changeRate").toString();// 单位 转换率
-                        Map<String,String> resultstr = new HashMap<String,String>();//用来存 返回 字符串的 MAP
-                        resultstr.put("unitID",unitMap.get("did").toString());
-                        resultstr.put("Code",unitMap.get("dcode").toString());
-                        resultstr.put("Name",unitMap.get("dname").toString());
-
-                        // 如果 此商品 此单位  在 此价格策略中 找到了 就用，没找到，才用下面这个 乘积
-                        Map<String,Object> map1 = new HashMap<String,Object>();
-                        map1.put("idinventory",inventory);
-                        map1.put("iddepartment",department);
-                        map1.put("idcustomer",customer);
-                        map1.put("code",unitMap.get("dcode").toString());
-                        String unitprice = orderMapper.getDepartmentPriceByInventoryAndUnitCode(map1);
-                        if(unitprice != null && !"".equals(unitprice)){
-                            resultstr.put("price",unitprice);
-                        }else{
-                            resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
-                        }
-                        ll.add(resultstr);
-                    }
-                    JSONArray ja = new JSONArray();
-                    ja.addAll(ll);
-                    price = ja.toJSONString();
-                }
+                // 如果 此商品 此单位  在 此价格策略中
+                Map<String,Object> map1 = new HashMap<String,Object>();
+                map1.put("idinventory",inventory);
+                map1.put("iddepartment",department);
+                map1.put("idcustomer",customer);
+                map1.put("code",dcodee);
+                String unitprice1 = orderMapper.getDepartmentPriceByInventoryAndUnitCode(map1);
+                price = unitprice1;
                 break;
             case "客户最新售价":
                 Map<String,String> param = new HashMap<String,String>();
@@ -353,9 +348,17 @@ public class TokenServiceImpl implements TokenService {
                         map1.put("iddepartment",department);
                         map1.put("idcustomer",customer);
                         map1.put("code",unitMap.get("dcode").toString());
+                        // increasePriceRate 是价格本里面的 加价率 ， discount 是售价带出策略里面的加价率
+                        String increasePriceRate = customerpricelastMap.get("increasePriceRate").toString();
                         String unitprice = orderMapper.getCustomerLastpriceByInventoryAndUnitCode(map1);
-                        if(unitprice != null && !"".equals(unitprice)){
-                            resultstr.put("price",unitprice);
+                        String unitpricee = "";
+                        if(increasePriceRate != null && !"".equals(increasePriceRate) && Float.valueOf(increasePriceRate) != 0f ){
+                            unitpricee = (Float.valueOf(unitprice) * (1+Float.valueOf(increasePriceRate)))+"" ;
+                        }else{
+                            unitpricee = (Float.valueOf(unitprice) * (1+Float.valueOf(discount)))+"" ;
+                        }
+                        if(unitpricee != null && !"".equals(unitpricee)){
+                            resultstr.put("price",unitpricee);
                         }else{
                             resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
                         }
@@ -380,7 +383,8 @@ public class TokenServiceImpl implements TokenService {
                     mm.put("unitID",inventoryUnit.get(0).get("id").toString());
                     mm.put("Code",inventoryUnit.get(0).get("code").toString());
                     mm.put("Name",inventoryUnit.get(0).get("name").toString());
-                    mm.put("price",inventorypriceplusMap.get("price").toString());
+                    String ratePirce = "" + (1+Float.valueOf(discount))*Float.valueOf(inventorypriceplusMap.get("price").toString());
+                    mm.put("price",ratePirce);
                     List<Map<String,String>> ll = new ArrayList<Map<String,String>>();
                     ll.add(mm);
                     JSONArray ja = new JSONArray();
@@ -406,7 +410,8 @@ public class TokenServiceImpl implements TokenService {
                         map1.put("code",unitMap.get("dcode").toString());
                         String unitprice = orderMapper.getInventoryLastpriceByInventoryAndUnitCode(map1);
                         if(unitprice != null && !"".equals(unitprice)){
-                            resultstr.put("price",unitprice);
+                            String sss = "" +(1+Float.valueOf(discount))*Float.valueOf(unitprice);
+                            resultstr.put("price",sss);
                         }else{
                             resultstr.put("price",Float.valueOf(changeRate)*Float.valueOf(mainUnitPirce)+"");
                         }
