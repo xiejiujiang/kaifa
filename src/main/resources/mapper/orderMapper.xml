@@ -188,7 +188,7 @@
 
     <select id="getInventoryLastpriceByInventoryAndUnitCode" parameterType="java.util.Map" resultType="java.lang.String">
         select TOP 1
-        t1.latestPPrice as price
+        ISNULL(t1.latestPPrice,'0') as price
         from AA_InventoryPriceTrace t1,AA_Inventory t2,AA_unit t3
         where t1.idInventory = t2.id and t2.code = #{idinventory} and t1.idunit = t3.id
         and t3.code = #{code}

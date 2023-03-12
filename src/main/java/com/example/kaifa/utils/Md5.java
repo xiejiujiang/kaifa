@@ -35,8 +35,8 @@ public class Md5 {
     }
 
     public static void main(String[] args) {
-//http://47.108.79.26:9998/kaifa/token/getsaleprice?customer=0010004&inventory=00241&department=02&sign=4b78e99e13fb0dce729987cea4f744ca
+//http://47.108.79.26:9998/kaifa/token/getsaleprice?customer=0010004&inventory=00241&department=02&sign=77c036c533cc4d4b6238a61f756246d3
         //customer+inventory+department+today
-       System.out.println(Md5.md5("0010004"+"00241"+"02"+"20220921"));
+       System.out.println(Md5.md5("0010004"+"00241"+"02"+"20220922"));
     }
 }
